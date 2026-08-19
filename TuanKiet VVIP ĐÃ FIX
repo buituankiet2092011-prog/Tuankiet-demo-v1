@@ -1,0 +1,421 @@
+-- ===================================================
+-- TUANKIET DEMO - FIXED (ĐÃ FIX LỖI KHI KHÔNG ĐỦ TIỀN MUA HẠT)
+-- ===================================================
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+
+-- Sidebar
+local SideBar = Instance.new("Frame")
+local TabFixLagBtn = Instance.new("TextButton")
+local TabHatGiongBtn = Instance.new("TextButton")
+
+-- Content Area
+local ContentArea = Instance.new("Frame")
+local PageFixLag = Instance.new("Frame")
+PageFixLag.Name = "PageFixLag"
+local PageHatGiong = Instance.new("Frame")
+PageHatGiong.Name = "PageHatGiong"
+
+-- Control Elements
+local LowGFXBtn = Instance.new("TextButton")
+local SpeedBtn = Instance.new("TextButton")
+local AutoBuyBtn = Instance.new("TextButton")
+local RarityFilterBtn = Instance.new("TextButton")
+local AutoSellBtn = Instance.new("TextButton")
+
+-- Nút Tìm Map Vắng
+local ServerHopBtn = Instance.new("TextButton")
+
+-- Nút Thu Nhỏ Menu Mobile
+local ToggleMenuBtn = Instance.new("TextButton")
+
+-- Biến lưu trạng thái
+local autoBuy = false
+local filterMode = 1 
+local autoSell = false
+
+local filterNames = {
+    [1] = "LỌC: TẤT CẢ HẠT",
+    [2] = "LỌC: HUYỀN THOẠI TRỞ LÊN",
+    [3] = "LỌC: CHỈ HẠT ĐỘT BIẾN"
+}
+
+-- 1. TẠO GUI (MENU NHỎ GỌN)
+ScreenGui.Name = "TuankietDemo_GreedyGrowers"
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+MainFrame.Position = UDim2.new(0.2, 0, 0.2, 0)
+MainFrame.Size = UDim2.new(0, 280, 0, 235)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 2.5
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 26)
+Title.BackgroundTransparency = 1
+Title.Text = "Tuankiet Demo VVIP"
+Title.TextSize = 13
+Title.Font = Enum.Font.SourceSansBold
+
+-- 2. SIDEBAR
+SideBar.Parent = MainFrame
+SideBar.Position = UDim2.new(0, 4, 0, 30)
+SideBar.Size = UDim2.new(0, 80, 1, -34)
+SideBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+
+TabFixLagBtn.Parent = SideBar
+TabFixLagBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+TabFixLagBtn.Size = UDim2.new(0.9, 0, 0, 30)
+TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TabFixLagBtn.Text = "Hệ Thống"
+TabFixLagBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TabFixLagBtn.TextSize = 12
+TabFixLagBtn.Font = Enum.Font.SourceSansBold
+
+TabHatGiongBtn.Parent = SideBar
+TabHatGiongBtn.Position = UDim2.new(0.05, 0, 0.23, 0)
+TabHatGiongBtn.Size = UDim2.new(0.9, 0, 0, 30)
+TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TabHatGiongBtn.Text = "Mua Hạt"
+TabHatGiongBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TabHatGiongBtn.TextSize = 12
+TabHatGiongBtn.Font = Enum.Font.SourceSansBold
+
+-- 3. CONTENT AREA
+ContentArea.Parent = MainFrame
+ContentArea.Position = UDim2.new(0, 88, 0, 30)
+ContentArea.Size = UDim2.new(1, -92, 1, -34)
+ContentArea.BackgroundTransparency = 1
+
+PageFixLag.Parent = ContentArea
+PageFixLag.Size = UDim2.new(1, 0, 1, 0)
+PageFixLag.BackgroundTransparency = 1
+
+PageHatGiong.Parent = ContentArea
+PageHatGiong.Size = UDim2.new(1, 0, 1, 0)
+PageHatGiong.BackgroundTransparency = 1
+PageHatGiong.Visible = false
+
+-- TAB HỆ THỐNG
+LowGFXBtn.Parent = PageFixLag
+LowGFXBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+LowGFXBtn.Size = UDim2.new(0.9, 0, 0, 32)
+LowGFXBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+LowGFXBtn.Text = "TẮT HIỆU ỨNG (TỐI ƯU)"
+LowGFXBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LowGFXBtn.TextSize = 11
+LowGFXBtn.Font = Enum.Font.SourceSansBold
+
+SpeedBtn.Parent = PageFixLag
+SpeedBtn.Position = UDim2.new(0.05, 0, 0.35, 0)
+SpeedBtn.Size = UDim2.new(0.9, 0, 0, 32)
+SpeedBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+SpeedBtn.Text = "SPEED: THƯỜNG (16)"
+SpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedBtn.TextSize = 11
+SpeedBtn.Font = Enum.Font.SourceSansBold
+
+-- NÚT TÌM MAP VẮNG
+ServerHopBtn.Parent = PageFixLag
+ServerHopBtn.Position = UDim2.new(0.05, 0, 0.65, 0)
+ServerHopBtn.Size = UDim2.new(0.9, 0, 0, 32)
+ServerHopBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ServerHopBtn.Text = "🔍 TÌM MAP VẮNG"
+ServerHopBtn.TextColor3 = Color3.fromRGB(255, 215, 0)
+ServerHopBtn.TextSize = 11
+ServerHopBtn.Font = Enum.Font.SourceSansBold
+
+-- TAB MUA HẠT
+AutoBuyBtn.Parent = PageHatGiong
+AutoBuyBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+AutoBuyBtn.Size = UDim2.new(0.9, 0, 0, 34)
+AutoBuyBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+AutoBuyBtn.Text = "AUTO MUA HẠT: TẮT"
+AutoBuyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoBuyBtn.TextSize = 11
+AutoBuyBtn.Font = Enum.Font.SourceSansBold
+
+RarityFilterBtn.Parent = PageHatGiong
+RarityFilterBtn.Position = UDim2.new(0.05, 0, 0.36, 0)
+RarityFilterBtn.Size = UDim2.new(0.9, 0, 0, 32)
+RarityFilterBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+RarityFilterBtn.Text = "LỌC: TẤT CẢ HẠT"
+RarityFilterBtn.TextColor3 = Color3.fromRGB(255, 255, 0)
+RarityFilterBtn.TextSize = 11
+RarityFilterBtn.Font = Enum.Font.SourceSansBold
+
+AutoSellBtn.Parent = PageHatGiong
+AutoSellBtn.Position = UDim2.new(0.05, 0, 0.67, 0)
+AutoSellBtn.Size = UDim2.new(0.9, 0, 0, 32)
+AutoSellBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+AutoSellBtn.Text = "AUTO BÁN NÔNG SẢN: TẮT"
+AutoSellBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoSellBtn.TextSize = 11
+AutoSellBtn.Font = Enum.Font.SourceSansBold
+
+-- NÚT THU NHỎ MENU
+ToggleMenuBtn.Parent = ScreenGui
+ToggleMenuBtn.Position = UDim2.new(0.02, 0, 0.15, 0)
+ToggleMenuBtn.Size = UDim2.new(0, 95, 0, 30)
+ToggleMenuBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ToggleMenuBtn.Text = "Tuankiet Demo"
+ToggleMenuBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleMenuBtn.TextSize = 11
+ToggleMenuBtn.Font = Enum.Font.SourceSansBold
+
+local ToggleStroke = Instance.new("UIStroke")
+ToggleStroke.Parent = ToggleMenuBtn
+ToggleStroke.Thickness = 2
+ToggleStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- 4. HIỆU ỨNG CẦU VỒNG RGB TOÀN DIỆN (VIP)
+task.spawn(function()
+    local hue = 0
+    while task.wait(0.03) do
+        hue = (hue + 0.005) % 1
+        local rainbowColor = Color3.fromHSV(hue, 0.8, 1)
+        UIStroke.Color = rainbowColor
+        ToggleStroke.Color = rainbowColor
+        Title.TextColor3 = rainbowColor
+        ToggleMenuBtn.TextColor3 = rainbowColor
+    end
+end)
+
+-- 5. LÔ GÍC LỌC HẠT
+local function checkRarityFilter(nameText)
+    local str = string.lower(nameText)
+    if filterMode == 1 then
+        return true
+    elseif filterMode == 2 then
+        return string.find(str, "legendary") or string.find(str, "mythic") or string.find(str, "exotic") or string.find(str, "divine") or string.find(str, "godly") or string.find(str, "celestial") or string.find(str, "secret") or string.find(str, "ancient") or string.find(str, "huyền thoại") or string.find(str, "thần thoại") or string.find(str, "vũ trụ") or string.find(str, "bí ẩn")
+    elseif filterMode == 3 then
+        return string.find(str, "mutat") or string.find(str, "đột biến") or string.find(str, "biến dị") or string.find(str, "glitch")
+    end
+    return true
+end
+
+-- 6. VÒNG LẶP AUTO MUA HẠT (BỎ QUA KHI KHÔNG ĐỦ TIỀN / TRÁNH HIỆN BẢNG ROBUX)
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoBuy then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        local parent = prompt.Parent
+                        local pName = string.lower(parent and parent.Name or "")
+                        local parentParentName = string.lower((parent and parent.Parent) and parent.Parent.Name or "")
+                        local objText = string.lower(prompt.ObjectText or "")
+                        local actionText = string.lower(prompt.ActionText or "")
+
+                        local combinedInfo = pName .. " " .. parentParentName .. " " .. objText .. " " .. actionText
+
+                        local isBlacklisted = 
+                            string.find(combinedInfo, "fertiliz") or 
+                            string.find(combinedInfo, "compost") or 
+                            string.find(combinedInfo, "manure") or 
+                            string.find(combinedInfo, "dung") or 
+                            string.find(combinedInfo, "soil") or 
+                            string.find(combinedInfo, "dirt") or 
+                            string.find(combinedInfo, "plot") or 
+                            string.find(combinedInfo, "ticket") or 
+                            string.find(combinedInfo, "market") or 
+                            string.find(combinedInfo, "farmer") or 
+                            string.find(combinedInfo, "submit") or 
+                            string.find(combinedInfo, "exchange") or 
+                            string.find(combinedInfo, "trade") or 
+                            string.find(combinedInfo, "deliver") or 
+                            string.find(combinedInfo, "quest") or 
+                            string.find(combinedInfo, "npc") or 
+                            string.find(combinedInfo, "talk") or 
+                            string.find(combinedInfo, "dialogue") or 
+                            string.find(combinedInfo, "merchant") or 
+                            string.find(combinedInfo, "shop") or 
+                            string.find(combinedInfo, "store") or 
+                            string.find(combinedInfo, "pet") or 
+                            string.find(combinedInfo, "egg") or 
+                            string.find(combinedInfo, "seller") or
+                            string.find(combinedInfo, "claim") or
+                            string.find(combinedInfo, "robux") or
+                            string.find(combinedInfo, "cash") or
+                            string.find(actionText, "robux")
+
+                        local isSeed = string.find(combinedInfo, "seed") or string.find(actionText, "buy seed")
+
+                        if not isBlacklisted and isSeed then
+                            if checkRarityFilter(combinedInfo) then
+                                -- Kiểm tra nếu có hiển thị giá tiền/thông tin yêu cầu Robux thì bỏ qua
+                                local canBuy = true
+                                if parent and parent:FindFirstChild("BillboardGui") then
+                                    for _, label in pairs(parent.BillboardGui:GetDescendants()) do
+                                        if label:IsA("TextLabel") and (string.find(string.lower(label.Text), "robux") or string.find(string.lower(label.Text), "r$")) then
+                                            canBuy = false
+                                        end
+                                    end
+                                end
+                                
+                                if canBuy then
+                                    fireproximityprompt(prompt)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 7. VÒNG LẶP AUTO BÁN NÔNG SẢN
+task.spawn(function()
+    while task.wait(1) do
+        if autoSell then
+            pcall(function()
+                for _, remote in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (string.find(string.lower(remote.Name), "sell") or string.find(string.lower(remote.Name), "harvest")) then
+                        remote:FireServer()
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- 8. LÔ GÍC NÚT TÌM MAP VẮNG (SERVER HOP)
+ServerHopBtn.MouseButton1Click:Connect(function()
+    ServerHopBtn.Text = "⏳ Đang tìm map..."
+    task.spawn(function()
+        local success = pcall(function()
+            local servers = {}
+            local req = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
+            local data = game:GetService("HttpService"):JSONDecode(req)
+            for _, s in pairs(data.data) do
+                if s.playing < s.maxPlayers and s.id ~= game.JobId then
+                    table.insert(servers, s)
+                end
+            end
+            if #servers > 0 then
+                table.sort(servers, function(a, b) return a.playing < b.playing end)
+                ServerHopBtn.Text = "🚀 Đang chuyển..."
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, servers[1].id, game:GetService("Players").LocalPlayer)
+            else
+                ServerHopBtn.Text = "❌ Hết map!"
+                task.wait(2)
+                ServerHopBtn.Text = "🔍 TÌM MAP VẮNG"
+            end
+        end)
+        if not success then
+            ServerHopBtn.Text = "❌ Lỗi!"
+            task.wait(2)
+            ServerHopBtn.Text = "🔍 TÌM MAP VẮNG"
+        end
+    end)
+end)
+
+-- 9. SỰ KIỆN NÚT BẤM VÀ ĐỔI TAB
+TabFixLagBtn.MouseButton1Click:Connect(function()
+    PageFixLag.Visible = true
+    PageHatGiong.Visible = false
+    TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+end)
+
+TabHatGiongBtn.MouseButton1Click:Connect(function()
+    PageFixLag.Visible = false
+    PageHatGiong.Visible = true
+    TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+end)
+
+AutoBuyBtn.MouseButton1Click:Connect(function()
+    autoBuy = not autoBuy
+    AutoBuyBtn.Text = autoBuy and "AUTO MUA HẠT: BẬT" or "AUTO MUA HẠT: TẮT"
+    AutoBuyBtn.TextColor3 = autoBuy and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+RarityFilterBtn.MouseButton1Click:Connect(function()
+    filterMode = filterMode + 1
+    if filterMode > 3 then filterMode = 1 end
+    RarityFilterBtn.Text = filterNames[filterMode]
+end)
+
+AutoSellBtn.MouseButton1Click:Connect(function()
+    autoSell = not autoSell
+    AutoSellBtn.Text = autoSell and "AUTO BÁN NÔNG SẢN: BẬT" or "AUTO BÁN NÔNG SẢN: TẮT"
+    AutoSellBtn.TextColor3 = autoSell and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+-- HÀM TẮT SẠCH HIỆU ỨNG & ĐỒ HỌA NẶNG (ULTRA LOW GFX)
+local function disableAllEffects(obj)
+    if obj:IsA("BasePart") then
+        obj.CastShadow = false
+        obj.Material = Enum.Material.SmoothPlastic
+        obj.Reflectance = 0
+        if obj:IsA("MeshPart") then obj.TextureID = "" end
+    elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Beam") or obj:IsA("Highlight") or obj:IsA("Explosion") then
+        obj:Destroy()
+    elseif obj:IsA("Texture") or obj:IsA("Decal") then
+        obj:Destroy()
+    end
+end
+
+local isUltraLowActive = false
+local connection
+
+LowGFXBtn.MouseButton1Click:Connect(function()
+    isUltraLowActive = not isUltraLowActive
+    local Lighting = game:GetService("Lighting")
+    
+    if isUltraLowActive then
+        LowGFXBtn.Text = "TẮT HIỆU ỨNG (ĐÃ BẬT)"
+        LowGFXBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+        
+        Lighting.GlobalShadows = false
+        Lighting.Brightness = 1
+        Lighting.FogEnd = 9e9
+        
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("SunRaysEffect") or v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("DepthOfFieldEffect") then 
+                v:Destroy() 
+            end
+        end
+        
+        for _, v in pairs(workspace:GetDescendants()) do
+            disableAllEffects(v)
+        end
+        
+        connection = workspace.DescendantAdded:Connect(disableAllEffects)
+    else
+        if connection then connection:Disconnect() end
+        LowGFXBtn.Text = "TẮT HIỆU ỨNG (TỐI ƯU)"
+        LowGFXBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end)
+
+-- Tốc độ di chuyển
+local currentSpeedIndex = 2
+local speedList = {0, 16, 32, 50, 80, 120, 160, 200}
+SpeedBtn.MouseButton1Click:Connect(function()
+    currentSpeedIndex = currentSpeedIndex + 1
+    if currentSpeedIndex > #speedList then currentSpeedIndex = 1 end
+    local targetSpeed = speedList[currentSpeedIndex]
+    SpeedBtn.Text = "SPEED: " .. targetSpeed
+    local player = game:GetService("Players").LocalPlayer
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = targetSpeed
+    end
+end)
+
+-- Toggle Hiện/Ẩn Menu
+ToggleMenuBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
