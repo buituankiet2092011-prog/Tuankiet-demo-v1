@@ -1,0 +1,256 @@
+-- ===================================================
+-- TUANKIET ULTIMATE - MEME COLORFUL VIBES EDITION
+-- DEV: fanko1 | DEV | NOBITA
+-- ===================================================
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+if PlayerGui:FindFirstChild("TuankietDirectUI") then
+    PlayerGui["TuankietDirectUI"]:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "TuankietDirectUI"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ResetOnSpawn = false
+
+-- Nút mở/đóng menu góc trái
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Parent = ScreenGui
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleBtn.Position = UDim2.new(0.02, 0, 0.15, 0)
+ToggleBtn.Size = UDim2.new(0, 95, 0, 32)
+ToggleBtn.Text = "MENU NOBITA"
+ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleBtn.TextSize = 10
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+
+local ToggleStroke = Instance.new("UIStroke")
+ToggleStroke.Parent = ToggleBtn
+ToggleStroke.Thickness = 2
+ToggleStroke.Color = Color3.fromRGB(255, 255, 255)
+
+local ToggleCorner = Instance.new("UICorner")
+ToggleCorner.CornerRadius = UDim.new(0, 6)
+ToggleCorner.Parent = ToggleBtn
+
+-- Khung Menu Chính (Nền đổi màu rực rỡ phong cách meme/party)
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Hồng rực rỡ ban đầu
+Frame.Position = UDim2.new(0.5, -115, 0.35, -125)
+Frame.Size = UDim2.new(0, 230, 0, 265)
+Frame.Active = true
+Frame.Draggable = true
+Frame.ClipsDescendants = true
+
+local FrameStroke = Instance.new("UIStroke")
+FrameStroke.Parent = Frame
+FrameStroke.Thickness = 3
+
+local FrameCorner = Instance.new("UICorner")
+FrameCorner.CornerRadius = UDim.new(0, 10)
+FrameCorner.Parent = Frame
+
+-- HIỆU ỨNG HẠT RƠI LẤP LÁNH BÊN TRONG
+local ParticleHolder = Instance.new("Folder")
+ParticleHolder.Name = "SparklesFolder"
+ParticleHolder.Parent = Frame
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if Frame.Visible then
+            pcall(function()
+                local particle = Instance.new("Frame")
+                particle.Parent = ParticleHolder
+                local size = math.random(4, 8)
+                particle.Size = UDim2.new(0, size, 0, size)
+                particle.Position = UDim2.new(math.random(0, 95) / 100, 0, 0, 0)
+                particle.BackgroundColor3 = Color3.fromHSV(math.random(), 1, 1)
+                particle.BackgroundTransparency = 0.2
+                particle.BorderSizePixel = 0
+                particle.ZIndex = 5
+                
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(1, 0)
+                corner.Parent = particle
+
+                local tweenService = game:GetService("TweenService")
+                local fallDuration = math.random(10, 25) / 10
+                local info = TweenInfo.new(fallDuration, Enum.EasingStyle.Linear)
+                local goal = {
+                    Position = UDim2.new(particle.Position.X.Scale, math.random(-30, 30), 1, 0),
+                    BackgroundTransparency = 1
+                }
+                
+                local tween = tweenService:Create(particle, info, goal)
+                tween:Play()
+                tween.Completed:Connect(function() particle:Destroy() end)
+            end)
+        end
+    end
+end)
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Frame
+Title.Size = UDim2.new(1, 0, 0, 38)
+Title.BackgroundTransparency = 1
+Title.Text = "DEV: fanko1\n(DEV | NOBITA)"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 11
+Title.Font = Enum.Font.SourceSansBold
+Title.ZIndex = 10
+
+-- Danh sách các nút tính năng (Nền màu sáng sủa, nổi bật)
+local function createButton(name, posY)
+    local btn = Instance.new("TextButton")
+    btn.Parent = Frame
+    btn.Position = UDim2.new(0.05, 0, posY, 0)
+    btn.Size = UDim2.new(0.9, 0, 0, 34)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 9
+    btn.Font = Enum.Font.SourceSansBold
+    btn.ZIndex = 10
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Parent = btn
+    stroke.Thickness = 2
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 6)
+    corner.Parent = btn
+    
+    return btn, stroke
+end
+
+local AutoBuyBtn, Stroke1 = createButton("AUTO MUA HẠT: TẮT", 0.18)
+local AutoPickupSeedBtn, Stroke2 = createButton("NHẶT HẠT VƯỜN: TẮT", 0.36)
+local AntiThunderBtn, Stroke3 = createButton("CHỐNG SÉT ĐÁNH CÂY: TẮT", 0.54)
+local AutoSellBtn, Stroke4 = createButton("AUTO BÁN NÔNG SẢN: TẮT", 0.72)
+
+-- HIỆU ỨNG ĐỔI MÀU NỀN VÀ VIỀN CẦU VÒNG LIÊN TỤC
+task.spawn(function()
+    local hue = 0
+    while task.wait(0.03) do
+        hue = (hue + 0.003) % 1
+        local rainbowColor = Color3.fromHSV(hue, 0.8, 1)
+        
+        -- Nền đổi màu liên tục theo kiểu party/meme
+        Frame.BackgroundColor3 = Color3.fromHSV(hue, 0.5, 0.3)
+        FrameStroke.Color = rainbowColor
+        Stroke1.Color = rainbowColor
+        Stroke2.Color = rainbowColor
+        Stroke3.Color = rainbowColor
+        Stroke4.Color = rainbowColor
+        ToggleStroke.Color = rainbowColor
+    end
+end)
+
+-- Trạng thái
+local autoBuy = false
+local autoPickupSeed = false
+local antiThunder = false
+local autoSell = false
+
+-- Sự kiện ẩn hiện menu
+ToggleBtn.MouseButton1Click:Connect(function()
+    Frame.Visible = not Frame.Visible
+end)
+
+-- Sự kiện bật/tắt tính năng
+AutoBuyBtn.MouseButton1Click:Connect(function()
+    autoBuy = not autoBuy
+    AutoBuyBtn.Text = autoBuy and "AUTO MUA HẠT: BẬT" or "AUTO MUA HẠT: TẮT"
+    AutoBuyBtn.TextColor3 = autoBuy and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+AutoPickupSeedBtn.MouseButton1Click:Connect(function()
+    autoPickupSeed = not autoPickupSeed
+    AutoPickupSeedBtn.Text = autoPickupSeed and "NHẶT HẠT VƯỜN: BẬT" or "NHẶT HẠT VƯỜN: TẮT"
+    AutoPickupSeedBtn.TextColor3 = autoPickupSeed and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+AntiThunderBtn.MouseButton1Click:Connect(function()
+    antiThunder = not antiThunder
+    AntiThunderBtn.Text = antiThunder and "CHỐNG SÉT ĐÁNH CÂY: BẬT" or "CHỐNG SÉT ĐÁNH CÂY: TẮT"
+    AntiThunderBtn.TextColor3 = antiThunder and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+AutoSellBtn.MouseButton1Click:Connect(function()
+    autoSell = not autoSell
+    AutoSellBtn.Text = autoSell and "AUTO BÁN NÔNG SẢN: BẬT" or "AUTO BÁN NÔNG SẢN: TẮT"
+    AutoSellBtn.TextColor3 = autoSell and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+-- Vòng lặp chạy ngầm tính năng
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoBuy then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        local actionText = string.lower(prompt.ActionText or "")
+                        local objText = string.lower(prompt.ObjectText or "")
+                        if string.find(actionText, "buy seed") or string.find(objText, "seed") then
+                            fireproximityprompt(prompt)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoPickupSeed then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        local actionText = string.lower(prompt.ActionText or "")
+                        if string.find(actionText, "pick") or string.find(actionText, "collect") or string.find(actionText, "take") then
+                            if not string.find(actionText, "buy") then fireproximityprompt(prompt) end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.05) do
+        if antiThunder then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        local actionText = string.lower(prompt.ActionText or "")
+                        if string.find(actionText, "harvest") or string.find(actionText, "collect") or string.find(actionText, "pick") or string.find(actionText, "claim") then
+                            fireproximityprompt(prompt)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(1) do
+        if autoSell then
+            pcall(function()
+                for _, remote in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (string.find(string.lower(remote.Name), "sell") or string.find(string.lower(remote.Name), "harvest")) then
+                        remote:FireServer()
+                    end
+                end
+            end)
+        end
+    end
+end)
