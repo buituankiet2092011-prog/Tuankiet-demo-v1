@@ -1,0 +1,252 @@
+-- ===================================================
+-- TUANKIET V1 DEMO - TAB MENU & MINECRAFT GRAPHICS
+-- ===================================================
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+
+-- Sidebar (Thanh danh mục bên trái)
+local SideBar = Instance.new("Frame")
+local TabFixLagBtn = Instance.new("TextButton")
+local TabHatGiongBtn = Instance.new("TextButton")
+
+-- Content Area (Khu vực chứa nội dung bên phải)
+local ContentArea = Instance.new("Frame")
+local PageFixLag = Instance.new("Frame")
+local PageHatGiong = Instance.new("Frame")
+
+-- Buttons trong Page FixLag
+local LowGFXBtn = Instance.new("TextButton")
+local SpeedBtn = Instance.new("TextButton")
+
+-- Buttons trong Page Hạt Giống
+local AutoBuyBtn = Instance.new("TextButton")
+local AutoSellBtn = Instance.new("TextButton")
+local AutoPlantBtn = Instance.new("TextButton")
+
+-- Nút Thu Nhỏ
+local ToggleMenuBtn = Instance.new("TextButton")
+
+-- Kho chứa biến trạng thái
+local autoBuy = false
+local autoSell = false
+local autoPlant = false
+
+-- 1. THIẾT LẬP MÀN HÌNH CHÍNH
+ScreenGui.Name = "Tuankiet_v1_Demo"
+ScreenGui.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.25, 0, 0.25, 0)
+MainFrame.Size = UDim2.new(0, 360, 0, 220)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 2
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "Tuankiet v1 Demo"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 15
+Title.Font = Enum.Font.SourceSansBold
+
+-- 2. ĐANH MỤC BÊN TRÁI (SIDEBAR)
+SideBar.Parent = MainFrame
+SideBar.Position = UDim2.new(0, 5, 0, 35)
+SideBar.Size = UDim2.new(0, 100, 1, -40)
+SideBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+
+TabFixLagBtn.Parent = SideBar
+TabFixLagBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+TabFixLagBtn.Size = UDim2.new(0.9, 0, 0, 30)
+TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TabFixLagBtn.Text = "Hệ Thống"
+TabFixLagBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TabFixLagBtn.Font = Enum.Font.SourceSansBold
+
+TabHatGiongBtn.Parent = SideBar
+TabHatGiongBtn.Position = UDim2.new(0.05, 0, 0.25, 0)
+TabHatGiongBtn.Size = UDim2.new(0.9, 0, 0, 30)
+TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TabHatGiongBtn.Text = "Hạt Giống"
+TabHatGiongBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+TabHatGiongBtn.Font = Enum.Font.SourceSansBold
+
+-- 3. NỘI DUNG BÊN PHẢI (PAGES)
+ContentArea.Parent = MainFrame
+ContentArea.Position = UDim2.new(0, 110, 0, 35)
+ContentArea.Size = UDim2.new(1, -115, 1, -40)
+ContentArea.BackgroundTransparency = 1
+
+PageFixLag.Parent = ContentArea
+PageFixLag.Size = UDim2.new(1, 0, 1, 0)
+PageFixLag.BackgroundTransparency = 1
+
+PageHatGiong.Parent = ContentArea
+PageHatGiong.Size = UDim2.new(1, 0, 1, 0)
+PageHatGiong.BackgroundTransparency = 1
+PageHatGiong.Visible = false
+
+-- TAB HỆ THỐNG (FIX LAG & SPEED)
+LowGFXBtn.Parent = PageFixLag
+LowGFXBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+LowGFXBtn.Size = UDim2.new(0.9, 0, 0, 30)
+LowGFXBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+LowGFXBtn.Text = "ĐỒ HỌA MINECRAFT (0 LAG)"
+LowGFXBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+LowGFXBtn.Font = Enum.Font.SourceSansBold
+
+SpeedBtn.Parent = PageFixLag
+SpeedBtn.Position = UDim2.new(0.05, 0, 0.28, 0)
+SpeedBtn.Size = UDim2.new(0.9, 0, 0, 30)
+SpeedBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+SpeedBtn.Text = "SPEED: THƯỜNG (16)"
+SpeedBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedBtn.Font = Enum.Font.SourceSansBold
+
+-- TAB HẠT GIỐNG (AUTO BUY, SELL, PLANT)
+AutoBuyBtn.Parent = PageHatGiong
+AutoBuyBtn.Position = UDim2.new(0.05, 0, 0.05, 0)
+AutoBuyBtn.Size = UDim2.new(0.9, 0, 0, 30)
+AutoBuyBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AutoBuyBtn.Text = "AUTO MUA: TẮT"
+AutoBuyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoBuyBtn.Font = Enum.Font.SourceSansBold
+
+AutoSellBtn.Parent = PageHatGiong
+AutoSellBtn.Position = UDim2.new(0.05, 0, 0.28, 0)
+AutoSellBtn.Size = UDim2.new(0.9, 0, 0, 30)
+AutoSellBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AutoSellBtn.Text = "AUTO BÁN: TẮT"
+AutoSellBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoSellBtn.Font = Enum.Font.SourceSansBold
+
+AutoPlantBtn.Parent = PageHatGiong
+AutoPlantBtn.Position = UDim2.new(0.05, 0, 0.51, 0)
+AutoPlantBtn.Size = UDim2.new(0.9, 0, 0, 30)
+AutoPlantBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+AutoPlantBtn.Text = "AUTO TRỒNG: TẮT"
+AutoPlantBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoPlantBtn.Font = Enum.Font.SourceSansBold
+
+-- NÚT THU NHỎ MENU
+ToggleMenuBtn.Parent = ScreenGui
+ToggleMenuBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
+ToggleMenuBtn.Size = UDim2.new(0, 90, 0, 30)
+ToggleMenuBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ToggleMenuBtn.Text = "ẨN/HIỆN MENU"
+ToggleMenuBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleMenuBtn.Font = Enum.Font.SourceSansBold
+
+-- 4. CẦU VỒNG RGB ANIMATION
+task.spawn(function()
+    local hue = 0
+    while task.wait(0.03) do
+        hue = (hue + 0.005) % 1
+        local rainbowColor = Color3.fromHSV(hue, 0.8, 1)
+        UIStroke.Color = rainbowColor
+        Title.TextColor3 = rainbowColor
+    end
+end)
+
+-- 5. CHUYỂN TAB (TAB SWITCHING)
+TabFixLagBtn.MouseButton1Click:Connect(function()
+    PageFixLag.Visible = true
+    PageHatGiong.Visible = false
+    TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+end)
+
+TabHatGiongBtn.MouseButton1Click:Connect(function()
+    PageFixLag.Visible = false
+    PageHatGiong.Visible = true
+    TabFixLagBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TabHatGiongBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+end)
+
+-- 6. ĐỒ HỌA MINECRAFT (SIÊU THẤP - SMOOTH/BLOCKY)
+local isMinecraftGFX = false
+LowGFXBtn.MouseButton1Click:Connect(function()
+    isMinecraftGFX = not isMinecraftGFX
+    if isMinecraftGFX then
+        LowGFXBtn.Text = "ĐỒ HỌA MINECRAFT (ĐÃ BẬT)"
+        LowGFXBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+        
+        local Lighting = game:GetService("Lighting")
+        Lighting.GlobalShadows = false
+        Lighting.Brightness = 0
+        Lighting.FogEnd = 9e9
+        
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") then
+                v:Destroy()
+            end
+        end
+        
+        -- Chuyển toàn bộ map thành khối chất liệu Plastic phẳng (Phong cách Minecraft)
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") then
+                v.Material = Enum.Material.SmoothPlastic
+                v.Reflectance = 0
+                v.CastShadow = false
+            elseif v:IsA("Decal") or v:IsA("Texture") then
+                v:Destroy() -- Xóa Texture hình ảnh dán
+            elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") then
+                v.Enabled = false
+            end
+        end
+    else
+        LowGFXBtn.Text = "ĐỒ HỌA MINECRAFT (0 LAG)"
+        LowGFXBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end)
+
+-- 7. SPEED WALK LOGIC (0 -> 200)
+local currentSpeedIndex = 2
+local speedList = {0, 16, 32, 50, 80, 120, 160, 200}
+
+SpeedBtn.MouseButton1Click:Connect(function()
+    currentSpeedIndex = currentSpeedIndex + 1
+    if currentSpeedIndex > #speedList then currentSpeedIndex = 1 end
+    
+    local targetSpeed = speedList[currentSpeedIndex]
+    SpeedBtn.Text = "SPEED: " .. targetSpeed
+    
+    local player = game:GetService("Players").LocalPlayer
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = targetSpeed
+    end
+end)
+
+-- 8. XỬ LÝ NÚT HẠT GIỐNG (TOGGLE AUTO)
+AutoBuyBtn.MouseButton1Click:Connect(function()
+    autoBuy = not autoBuy
+    AutoBuyBtn.Text = autoBuy and "AUTO MUA: BẬT" or "AUTO MUA: TẮT"
+    AutoBuyBtn.TextColor3 = autoBuy and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+AutoSellBtn.MouseButton1Click:Connect(function()
+    autoSell = not autoSell
+    AutoSellBtn.Text = autoSell and "AUTO BÁN: BẬT" or "AUTO BÁN: TẮT"
+    AutoSellBtn.TextColor3 = autoSell and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+AutoPlantBtn.MouseButton1Click:Connect(function()
+    autoPlant = not autoPlant
+    AutoPlantBtn.Text = autoPlant and "AUTO TRỒNG: BẬT" or "AUTO TRỒNG: TẮT"
+    AutoPlantBtn.TextColor3 = autoPlant and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(255, 255, 255)
+end)
+
+-- LOGIC ẨN / HIỆN MENU
+ToggleMenuBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
