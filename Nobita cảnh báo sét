@@ -1,0 +1,486 @@
+-- ===================================================
+-- TUANKIET ULTIMATE - 3-TIME BLINK THUNDER WARNING
+-- DEV: fanko1 | NOBITA
+-- ===================================================
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+if PlayerGui:FindFirstChild("TuankietDirectUI") then
+    PlayerGui["TuankietDirectUI"]:Destroy()
+end
+
+local MainGui = Instance.new("ScreenGui")
+MainGui.Name = "TuankietDirectUI"
+MainGui.Parent = PlayerGui
+MainGui.ResetOnSpawn = false
+
+-- BIẾN LƯU TÊN ĐĂNG NHẬP VÀ TRẠNG THÁI GIEO HẠT CÁ NHÂN
+local loggedInUsername = LocalPlayer.Name
+local hasPlantedThisSession = false
+
+-- BẢNG CẢNH BÁO SÉT SỚM (MẶC ĐỊNH ẨN)
+local WarningLabel = Instance.new("TextLabel")
+WarningLabel.Parent = MainGui
+WarningLabel.BackgroundColor3 = Color3.fromRGB(220, 20, 60)
+WarningLabel.BackgroundTransparency = 0.2
+WarningLabel.Position = UDim2.new(0.5, -200, 0.05, 0)
+WarningLabel.Size = UDim2.new(0, 400, 0, 40)
+WarningLabel.Text = "⚡ CHUẨN BỊ: SÉT SẮP ĐÁNH! LẤY CÂY NGAY! ⚡"
+WarningLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+WarningLabel.TextSize = 11
+WarningLabel.Font = Enum.Font.SourceSansBold
+WarningLabel.Visible = false
+WarningLabel.BorderSizePixel = 0
+Instance.new("UICorner", WarningLabel).CornerRadius = UDim.new(0, 8)
+
+-- NÚT MỞ MENU (GÓC TRÁI)
+local ToggleBtn = Instance.new("TextButton")
+ToggleBtn.Parent = MainGui
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+ToggleBtn.Position = UDim2.new(0.02, 0, 0.15, 0)
+ToggleBtn.Size = UDim2.new(0, 105, 0, 35)
+ToggleBtn.Text = "MENU NOBITA"
+ToggleBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+ToggleBtn.TextSize = 10
+ToggleBtn.Font = Enum.Font.SourceSansBold
+ToggleBtn.Active = true
+ToggleBtn.Draggable = true
+ToggleBtn.BorderSizePixel = 0
+Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
+
+-- KHUNG MENU CHÍNH
+local Frame = Instance.new("Frame")
+Frame.Parent = MainGui
+Frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+Frame.Position = UDim2.new(0.5, -125, 0.35, -140)
+Frame.Size = UDim2.new(0, 250, 0, 330)
+Frame.Active = true
+Frame.Draggable = true
+Frame.ClipsDescendants = true
+Frame.Visible = true
+Frame.BorderSizePixel = 0
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+
+local Title = Instance.new("TextLabel")
+Title.Parent = Frame
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundTransparency = 1
+Title.Text = "USER: " .. LocalPlayer.Name .. " | NOBITA"
+Title.TextColor3 = Color3.fromRGB(0, 255, 127)
+Title.TextSize = 9
+Title.Font = Enum.Font.SourceSansBold
+Title.ZIndex = 10
+
+-- KHUNG ĐĂNG NHẬP TÊN
+local LoginFrame = Instance.new("Frame")
+LoginFrame.Parent = Frame
+LoginFrame.Position = UDim2.new(0.05, 0, 0.08, 0)
+LoginFrame.Size = UDim2.new(0.9, 0, 0, 35)
+LoginFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+LoginFrame.ZIndex = 10
+LoginFrame.BorderSizePixel = 0
+Instance.new("UICorner", LoginFrame).CornerRadius = UDim.new(0, 5)
+
+local UsernameBox = Instance.new("TextBox")
+UsernameBox.Parent = LoginFrame
+UsernameBox.Size = UDim2.new(0.68, 0, 1, 0)
+UsernameBox.BackgroundTransparency = 1
+UsernameBox.Text = loggedInUsername
+UsernameBox.PlaceholderText = "Nhập tên Roblox..."
+UsernameBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+UsernameBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+UsernameBox.TextSize = 9
+UsernameBox.Font = Enum.Font.SourceSansBold
+UsernameBox.ZIndex = 10
+
+local LoginBtn = Instance.new("TextButton")
+LoginBtn.Parent = LoginFrame
+LoginBtn.Position = UDim2.new(0.7, 0, 0.1, 0)
+LoginBtn.Size = UDim2.new(0.28, 0, 0.8, 0)
+LoginBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+LoginBtn.Text = "LƯU TÊN"
+LoginBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+LoginBtn.TextSize = 8
+LoginBtn.Font = Enum.Font.SourceSansBold
+LoginBtn.ZIndex = 10
+LoginBtn.BorderSizePixel = 0
+Instance.new("UICorner", LoginBtn).CornerRadius = UDim.new(0, 4)
+
+-- TAB BAR
+local TabBar = Instance.new("Frame")
+TabBar.Parent = Frame
+TabBar.Position = UDim2.new(0.05, 0, 0.21, 0)
+TabBar.Size = UDim2.new(0.9, 0, 0, 26)
+TabBar.BackgroundTransparency = 1
+TabBar.ZIndex = 10
+
+local TabFarmBtn = Instance.new("TextButton")
+TabFarmBtn.Parent = TabBar
+TabFarmBtn.Size = UDim2.new(0.48, 0, 1, 0)
+TabFarmBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TabFarmBtn.Text = "NÔNG TRẠI"
+TabFarmBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+TabFarmBtn.TextSize = 9
+TabFarmBtn.Font = Enum.Font.SourceSansBold
+TabFarmBtn.ZIndex = 10
+TabFarmBtn.BorderSizePixel = 0
+Instance.new("UICorner", TabFarmBtn).CornerRadius = UDim.new(0, 5)
+
+local TabSysBtn = Instance.new("TextButton")
+TabSysBtn.Parent = TabBar
+TabSysBtn.Position = UDim2.new(0.52, 0, 0, 0)
+TabSysBtn.Size = UDim2.new(0.48, 0, 1, 0)
+TabSysBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TabSysBtn.Text = "HỆ THỐNG"
+TabSysBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+TabSysBtn.TextSize = 9
+TabSysBtn.Font = Enum.Font.SourceSansBold
+TabSysBtn.ZIndex = 10
+TabSysBtn.BorderSizePixel = 0
+Instance.new("UICorner", TabSysBtn).CornerRadius = UDim.new(0, 5)
+
+-- NỘI DUNG TRANG
+local ContentFrame = Instance.new("Frame")
+ContentFrame.Parent = Frame
+ContentFrame.Position = UDim2.new(0.05, 0, 0.30, 0)
+ContentFrame.Size = UDim2.new(0.9, 0, 0.67, 0)
+ContentFrame.BackgroundTransparency = 1
+ContentFrame.ZIndex = 10
+
+local FarmPage = Instance.new("ScrollingFrame")
+FarmPage.Parent = ContentFrame
+FarmPage.Size = UDim2.new(1, 0, 1, 0)
+FarmPage.BackgroundTransparency = 1
+FarmPage.CanvasSize = UDim2.new(0, 0, 0, 180)
+FarmPage.ScrollBarThickness = 2
+FarmPage.Visible = true
+FarmPage.ZIndex = 10
+FarmPage.BorderSizePixel = 0
+
+local SysPage = Instance.new("ScrollingFrame")
+SysPage.Parent = ContentFrame
+SysPage.Size = UDim2.new(1, 0, 1, 0)
+SysPage.BackgroundTransparency = 1
+SysPage.CanvasSize = UDim2.new(0, 0, 0, 140)
+SysPage.ScrollBarThickness = 2
+SysPage.Visible = false
+SysPage.ZIndex = 10
+SysPage.BorderSizePixel = 0
+
+local function createPageButton(parent, name, posY)
+    local btn = Instance.new("TextButton")
+    btn.Parent = parent
+    btn.Position = UDim2.new(0, 0, 0, posY)
+    btn.Size = UDim2.new(1, 0, 0, 32)
+    btn.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    btn.TextSize = 9
+    btn.Font = Enum.Font.SourceSansBold
+    btn.ZIndex = 10
+    btn.BorderSizePixel = 0
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    return btn
+end
+
+local AutoBuyBtn = createPageButton(FarmPage, "AUTO MUA HẠT: TẮT", 5)
+local AutoPickupSeedBtn = createPageButton(FarmPage, "NHẶT HẠT VƯỜN: TẮT", 42)
+local ThunderAlertBtn = createPageButton(FarmPage, "CẢNH BÁO SÉT SỚM: TẮT", 79)
+local AutoSellBtn = createPageButton(FarmPage, "AUTO BÁN NÔNG SẢN: TẮT", 116)
+
+local ServerHopBtn = createPageButton(SysPage, "🔍 TÌM MAP VẮNG", 5)
+local FixLagBtn = createPageButton(SysPage, "FIX LAG MÁY YẾU: TẮT", 42)
+
+LoginBtn.MouseButton1Click:Connect(function()
+    if UsernameBox.Text ~= "" then
+        loggedInUsername = UsernameBox.Text
+        LoginBtn.Text = "ĐÃ LƯU!"
+        task.wait(1)
+        LoginBtn.Text = "LƯU TÊN"
+    end
+end)
+
+TabFarmBtn.MouseButton1Click:Connect(function()
+    FarmPage.Visible = true
+    SysPage.Visible = false
+    TabFarmBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TabFarmBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+    TabSysBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TabSysBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+end)
+
+TabSysBtn.MouseButton1Click:Connect(function()
+    FarmPage.Visible = false
+    SysPage.Visible = true
+    TabSysBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    TabSysBtn.TextColor3 = Color3.fromRGB(0, 255, 127)
+    TabFarmBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    TabFarmBtn.TextColor3 = Color3.fromRGB(180, 180, 180)
+end)
+
+local autoBuy = false
+local autoPickupSeed = false
+local thunderAlertEnabled = false
+local autoSell = false
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    Frame.Visible = not Frame.Visible
+end)
+
+AutoBuyBtn.MouseButton1Click:Connect(function()
+    autoBuy = not autoBuy
+    AutoBuyBtn.Text = autoBuy and "AUTO MUA HẠT: BẬT" or "AUTO MUA HẠT: TẮT"
+    AutoBuyBtn.TextColor3 = autoBuy and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(200, 200, 200)
+end)
+
+AutoPickupSeedBtn.MouseButton1Click:Connect(function()
+    autoPickupSeed = not autoPickupSeed
+    AutoPickupSeedBtn.Text = autoPickupSeed and "NHẶT HẠT VƯỜN: BẬT" or "NHẶT HẠT VƯỜN: TẮT"
+    AutoPickupSeedBtn.TextColor3 = autoPickupSeed and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(200, 200, 200)
+end)
+
+ThunderAlertBtn.MouseButton1Click:Connect(function()
+    thunderAlertEnabled = not thunderAlertEnabled
+    ThunderAlertBtn.Text = thunderAlertEnabled and "CẢNH BÁO SÉT SỚM: BẬT" or "CẢNH BÁO SÉT SỚM: TẮT"
+    ThunderAlertBtn.TextColor3 = thunderAlertEnabled and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(200, 200, 200)
+    if not thunderAlertEnabled then
+        WarningLabel.Visible = false
+    end
+end)
+
+AutoSellBtn.MouseButton1Click:Connect(function()
+    autoSell = not autoSell
+    AutoSellBtn.Text = autoSell and "AUTO BÁN NÔNG SẢN: BẬT" or "AUTO BÁN NÔNG SẢN: TẮT"
+    AutoSellBtn.TextColor3 = autoSell and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(200, 200, 200)
+end)
+
+ServerHopBtn.MouseButton1Click:Connect(function()
+    ServerHopBtn.Text = "⏳ Đang tìm server..."
+    task.spawn(function()
+        pcall(function()
+            local servers = {}
+            local req = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
+            local data = game:GetService("HttpService"):JSONDecode(req)
+            for _, s in pairs(data.data) do
+                if s.playing < s.maxPlayers and s.id ~= game.JobId then
+                    table.insert(servers, s)
+                end
+            end
+            if #servers > 0 then
+                table.sort(servers, function(a, b) return a.playing < b.playing end)
+                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, servers[1].id, LocalPlayer)
+            else
+                ServerHopBtn.Text = "❌ Không tìm thấy map vắng!"
+                task.wait(2)
+                ServerHopBtn.Text = "🔍 TÌM MAP VẮNG"
+            end
+        end)
+    end)
+end)
+
+local isFixLagActive = false
+FixLagBtn.MouseButton1Click:Connect(function()
+    isFixLagActive = not isFixLagActive
+    FixLagBtn.Text = isFixLagActive and "FIX LAG MÁY YẾU: BẬT" or "FIX LAG MÁY YẾU: TẮT"
+    FixLagBtn.TextColor3 = isFixLagActive and Color3.fromRGB(0, 255, 127) or Color3.fromRGB(200, 200, 200)
+    
+    pcall(function()
+        local Lighting = game:GetService("Lighting")
+        Lighting.GlobalShadows = not isFixLagActive
+        Lighting.Brightness = 1
+        
+        for _, v in pairs(Lighting:GetChildren()) do
+            if v:IsA("PostEffect") or v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("BlurEffect") or v:IsA("SunRaysEffect") then
+                v.Enabled = not isFixLagActive
+            end
+        end
+        
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Material = isFixLagActive and Enum.Material.SmoothPlastic or Enum.Material.Plastic
+                obj.CastShadow = false
+            elseif obj:IsA("Decal") or obj:IsA("Texture") then
+                obj.Transparency = isFixLagActive and 1 or 0
+            elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Smoke") or obj:IsA("Fire") or obj:IsA("Sparkles") then
+                obj.Enabled = not isFixLagActive
+            end
+        end
+    end)
+end)
+
+-- THEO DÕI HÀNH ĐỘNG GIEO HẠT CÁ NHÂN
+task.spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            for _, prompt in pairs(workspace:GetDescendants()) do
+                if prompt:IsA("ProximityPrompt") then
+                    local actionText = string.lower(prompt.ActionText or "")
+                    local objText = string.lower(prompt.ObjectText or "")
+                    if string.find(actionText, "plant") or string.find(actionText, "gieo") or string.find(objText, "plant") or string.find(objText, "seed") then
+                        prompt.Triggered:Connect(function(playerWhoTriggered)
+                            if playerWhoTriggered == LocalPlayer then
+                                hasPlantedThisSession = true
+                            end
+                        end)
+                    end
+                end
+            end
+            
+            local char = LocalPlayer.Character
+            if char and char:FindFirstChild("HumanoidRootPart") then
+                local rootPos = char.HumanoidRootPart.Position
+                for _, item in pairs(workspace:GetDescendants()) do
+                    if (item:IsA("Model") or item:IsA("BasePart")) then
+                        local pos = item:IsA("BasePart") and item.Position or item:GetPivot().Position
+                        if (rootPos - pos).Magnitude < 10 then
+                            local n = string.lower(item.Name)
+                            if n ~= "humanoidrootpart" and n ~= "head" and n ~= "torso" and n ~= "left arm" and n ~= "right arm" and n ~= "left leg" and n ~= "right leg" and not string.find(n, "part") then
+                                hasPlantedThisSession = true
+                            end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- HỆ THỐNG QUÉT SÉT - NHẤP NHÁY CẢNH BÁO 3 LẦN TRƯỚC KHI SÉT ĐÁNH
+task.spawn(function()
+    local isWarningRunning = false
+    while task.wait(0.02) do
+        if thunderAlertEnabled and hasPlantedThisSession and not isWarningRunning then
+            pcall(function()
+                local isThunderIncoming = false
+                
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj:IsA("Sound") then
+                        local nameL = string.lower(obj.Name)
+                        if (string.find(nameL, "thunder") or string.find(nameL, "lightning") or string.find(nameL, "strike") or string.find(nameL, "storm") or string.find(nameL, "sét") or string.find(nameL, "sấm")) and (obj.IsLoaded or obj.Playing) then
+                            isThunderIncoming = true
+                            break
+                        end
+                    end
+                    if obj:IsA("BasePart") and obj.Transparency < 0.8 then
+                        local nameL = string.lower(obj.Name)
+                        if string.find(nameL, "warning") or string.find(nameL, "danger") or string.find(nameL, "target") or string.find(nameL, "zone") or string.find(nameL, "aoe") then
+                            isThunderIncoming = true
+                            break
+                        end
+                    end
+                end
+
+                if isThunderIncoming then
+                    isWarningRunning = true
+                    local foundCropName = "NÔNG SẢN"
+                    local char = LocalPlayer.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        local rootPos = char.HumanoidRootPart.Position
+                        for _, item in pairs(workspace:GetDescendants()) do
+                            if (item:IsA("Model") or item:IsA("BasePart")) then
+                                local pos = item:IsA("BasePart") and item.Position or item:GetPivot().Position
+                                if (rootPos - pos).Magnitude < 15 then
+                                    local n = string.lower(item.Name)
+                                    if n ~= "humanoidrootpart" and n ~= "head" and n ~= "torso" and n ~= "left arm" and n ~= "right arm" and n ~= "left leg" and n ~= "right leg" then
+                                        foundCropName = string.upper(item.Name)
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
+
+                    WarningLabel.Text = "⚡ " .. string.upper(loggedInUsername) .. " (" .. foundCropName .. "): SÉT SẮP ĐÁNH! LẤY NGAY! ⚡"
+
+                    -- NHẤP NHÁY HIỆN VÀ TẮT ĐÚNG 3 LẦN LIÊN TỤC
+                    for i = 1, 3 do
+                        WarningLabel.Visible = true
+                        task.wait(0.35)
+                        WarningLabel.Visible = false
+                        task.wait(0.2)
+                    end
+
+                    hasPlantedThisSession = false -- Reset trạng thái chờ lượt trồng mới
+                    isWarningRunning = false
+                end
+            end)
+        else
+            if not hasPlantedThisSession then
+                WarningLabel.Visible = false
+            end
+        end
+    end
+end)
+
+-- Auto Mua Hạt
+task.spawn(function()
+    while task.wait(0.1) do
+        if autoBuy then
+            pcall(function()
+                for _, prompt in pairs(workspace:GetDescendants()) do
+                    if prompt:IsA("ProximityPrompt") then
+                        local actionText = string.lower(prompt.ActionText or "")
+                        local objText = string.lower(prompt.ObjectText or "")
+                        if string.find(actionText, "buy seed") or string.find(objText, "seed") then
+                            fireproximityprompt(prompt)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Auto Nhặt Hạt
+task.spawn(function()
+    while task.wait(0.05) do
+        if autoPickupSeed then
+            pcall(function()
+                local character = LocalPlayer.Character
+                if character and character:FindFirstChild("HumanoidRootPart") then
+                    local rootPart = character.HumanoidRootPart
+                    
+                    for _, prompt in pairs(workspace:GetDescendants()) do
+                        if prompt:IsA("ProximityPrompt") then
+                            local parent = prompt.Parent
+                            if parent and (parent:IsA("BasePart") or parent:IsA("Model")) then
+                                local partPos = parent:IsA("BasePart") and parent.Position or parent:GetPivot().Position
+                                if (rootPart.Position - partPos).Magnitude <= 30 then
+                                    fireproximityprompt(prompt)
+                                end
+                            end
+                        end
+                    end
+                    
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj:IsA("BasePart") then
+                            local nameLower = string.lower(obj.Name)
+                            if string.find(nameLower, "seed") or string.find(nameLower, "hạt") or string.find(nameLower, "drop") then
+                                if (rootPart.Position - obj.Position).Magnitude <= 25 then
+                                    obj.CFrame = rootPart.CFrame
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Auto Bán Nông Sản
+task.spawn(function()
+    while task.wait(1) do
+        if autoSell then
+            pcall(function()
+                for _, remote in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (string.find(string.lower(remote.Name), "sell") or string.find(string.lower(remote.Name), "harvest")) then
+                        remote:FireServer()
+                    end
+                end
+            end)
+        end
+    end
+end)
